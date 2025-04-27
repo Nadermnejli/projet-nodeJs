@@ -21,6 +21,9 @@ const NoteSchema = new Schema({
   updatedAt: {
     type: Date,
     default: Date.now()
+  },
+  rememberDate: {
+    type: Date,  
   }
 });
 

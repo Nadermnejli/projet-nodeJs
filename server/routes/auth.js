@@ -18,6 +18,7 @@ passport.use(
         firstName: profile.name.givenName,
         lastName: profile.name.familyName,
         profileImage: profile.photos[0].value,
+        email: profile.emails[0].value, 
       };
 
       try {
@@ -34,6 +35,7 @@ passport.use(
     }
   )
 );
+
 
 // Google Login Route
 router.get(

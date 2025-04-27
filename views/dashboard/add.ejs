@@ -14,16 +14,24 @@
     </div>
   </div>
 
-
   <form action="/dashboard/add" method="POST" class="position-relative">
+    <!-- Title -->
     <div class="form-group mb-4 position-absolute" style="left:1px; top:1px; right: 1px;">
       <input type="text" class="form-control fw-bold border-0 fs-4" id="title" name="title" placeholder="Title" required>
     </div>
 
+    <!-- Body -->
     <div class="form-group mb-4">
       <textarea required class="form-control pt-5 fs-4" id="body" name="body" placeholder="Take a note..." rows="12"></textarea>
     </div>
 
+    <!-- Remember Date -->
+    <div class="form-group mb-4">
+      <label for="rememberDate" class="form-label fw-bold">Remember Date</label>
+      <input type="date" class="form-control" id="rememberDate" name="rememberDate">
+    </div>
+
+    <!-- Submit -->
     <div class="form-group">
       <button type="submit" class="btn btn-primary btn-lg">+ Add Note</button>
     </div>

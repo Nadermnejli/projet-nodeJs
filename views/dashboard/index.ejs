@@ -17,6 +17,9 @@
             <h5 class="card-title"><%= notes[i].title %></h5>
             <p class="card-text"><%= notes[i].body %></p>
           </a>
+          <div class="card-footer text-muted small">
+            Created At: <%= new Date(notes[i].createdAt).toLocaleDateString('en-GB') %>
+          </div>
         </div>
       </div>
     <%  }} else { %>

@@ -20,8 +20,8 @@ exports.homepage = async (req, res) => {
 */
 exports.about = async (req, res) => {
   const locals = {
-    title: "About - NodeJs Notes",
-    description: "Free NodeJS Notes App.",
+    title: "About -  Notes",
+    description: "Free Notes App.",
   }
   res.render('about', locals);
 }

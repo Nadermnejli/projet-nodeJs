@@ -24,9 +24,10 @@ exports.dashboard = async (req, res) => {
         $project: {
           title: { $substr: ["$title", 0, 30] },
           body: { $substr: ["$body", 0, 100] },
+          createdAt: 1,
         },
       }
-      ])
+    ])
     .skip(perPage * page - perPage)
     .limit(perPage)
     .exec(); 
@@ -34,7 +35,7 @@ exports.dashboard = async (req, res) => {
     const count = await Note.count();
 
     res.render('dashboard/index', {
-      userName: req.user.firstName,
+      userName: req.user.lastName+" "+req.user.firstName,
       locals,
       notes,
       layout: "../views/layouts/dashboard",
@@ -100,10 +101,27 @@ exports.dashboardViewNote = async (req, res) => {
  */
 exports.dashboardUpdateNote = async (req, res) => {
   try {
+    const updateData = {
+      title: req.body.title,
+      body: req.body.body,
+      updatedAt: Date.now(),
+    };
+
+    if (req.body.rememberDate) {
+      updateData.rememberDate = new Date(req.body.rememberDate);
+    } else {
+      updateData.rememberDate = null;
+    }
+
+    // Update the note in the database
     await Note.findOneAndUpdate(
       { _id: req.params.id },
-      { title: req.body.title, body: req.body.body, updatedAt: Date.now() }
+      updateData
     ).where({ user: req.user.id });
+
+    // Emit an event to notify all clients
+    io.emit('noteUpdated', { message: 'Note updated successfully!', type: 'info' });
+    console.log('Event emitted: noteUpdated');
     res.redirect("/dashboard");
   } catch (error) {
     console.log(error);
@@ -116,12 +134,18 @@ exports.dashboardUpdateNote = async (req, res) => {
  */
 exports.dashboardDeleteNote = async (req, res) => {
   try {
+    // Delete the note from the database
     await Note.deleteOne({ _id: req.params.id }).where({ user: req.user.id });
+    console.log('Event emitted: noteDeleted');
+    // Emit an event to notify all clients
+    io.emit('noteDeleted', { message: 'Note deleted successfully!', type: 'warning' });
+
     res.redirect("/dashboard");
   } catch (error) {
     console.log(error);
   }
 };
+
 
 /**
  * GET /
@@ -140,7 +164,20 @@ exports.dashboardAddNote = async (req, res) => {
 exports.dashboardAddNoteSubmit = async (req, res) => {
   try {
     req.body.user = req.user.id;
+    req.body.createdAt = new Date(); 
+
+    if (req.body.rememberDate) {
+      req.body.rememberDate = new Date(req.body.rememberDate);
+    } else {
+      req.body.rememberDate = null;
+    }
+
+    // Create the note in the database
     await Note.create(req.body);
+
+    // Emit an event to notify all clients
+    io.emit('noteCreated', { message: 'Note created successfully!', type: 'success' });
+    console.log('Event emitted: noteCreated');
     res.redirect("/dashboard");
   } catch (error) {
     console.log(error);
